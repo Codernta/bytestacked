@@ -119,17 +119,17 @@ class Navbar extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          _buildNavLink('Home', () => onNavTap('home'), isActive: true),
+                          _InteractiveNavLink(title: 'Home', onTap: () => onNavTap('home'), isActive: true),
                           const SizedBox(width: 28),
-                          _buildNavLink('Services', () => onNavTap('services')),
+                          _InteractiveNavLink(title: 'Services', onTap: () => onNavTap('services')),
                           const SizedBox(width: 28),
-                          _buildNavLink('Solutions', () => onNavTap('solutions')),
+                          _InteractiveNavLink(title: 'Solutions', onTap: () => onNavTap('solutions')),
                           const SizedBox(width: 28),
-                          _buildNavLink('Our Work', () => onNavTap('flutter-engineering')),
+                          _InteractiveNavLink(title: 'Our Work', onTap: () => onNavTap('flutter-engineering')),
                           const SizedBox(width: 28),
-                          _buildNavLink('About', () => onNavTap('why')),
+                          _InteractiveNavLink(title: 'About', onTap: () => onNavTap('why')),
                           const SizedBox(width: 28),
-                          _buildNavLink('Contact', () => onNavTap('contact')),
+                          _InteractiveNavLink(title: 'Contact', onTap: () => onNavTap('contact')),
                         ],
                       ),
 
@@ -137,37 +137,9 @@ class Navbar extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        ElevatedButton(
-                          onPressed: () => onNavTap('contact'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.secondary,
-                            foregroundColor: AppColors.onSecondary,
-                            elevation: 2,
-                            shadowColor: AppColors.secondary.withValues(alpha: 0.3),
-                            shape: const StadiumBorder(),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isDesktop ? 20 : 14,
-                              vertical: isDesktop ? 14 : 10,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "Let's Talk",
-                                style: AppTextStyles.labelMd(
-                                  color: AppColors.onSecondary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              const Icon(
-                                Icons.arrow_forward_rounded,
-                                size: 16,
-                                color: AppColors.onSecondary,
-                              ),
-                            ],
-                          ),
+                        _HoverCta(
+                          onTap: () => onNavTap('contact'),
+                          isDesktop: isDesktop,
                         ),
                         const SizedBox(width: 14),
                         // Avatar Badge
@@ -213,17 +185,109 @@ class Navbar extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildNavLink(String title, VoidCallback onTap, {bool isActive = false}) {
+class _InteractiveNavLink extends StatefulWidget {
+  final String title;
+  final VoidCallback onTap;
+  final bool isActive;
+
+  const _InteractiveNavLink({
+    required this.title,
+    required this.onTap,
+    this.isActive = false,
+  });
+
+  @override
+  State<_InteractiveNavLink> createState() => _InteractiveNavLinkState();
+}
+
+class _InteractiveNavLinkState extends State<_InteractiveNavLink> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isHighlighted = widget.isActive || _isHovered;
+
     return MouseRegion(
       cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
-        onTap: onTap,
-        child: Text(
-          title,
+        onTap: widget.onTap,
+        child: AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 180),
           style: AppTextStyles.labelMd(
-            color: isActive ? AppColors.secondary : AppColors.onSurfaceVariant,
-            fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
+            color: isHighlighted ? AppColors.secondary : AppColors.onSurfaceVariant,
+            fontWeight: widget.isActive ? FontWeight.w700 : (_isHovered ? FontWeight.w600 : FontWeight.w500),
+          ),
+          child: Text(widget.title),
+        ),
+      ),
+    );
+  }
+}
+
+class _HoverCta extends StatefulWidget {
+  final VoidCallback onTap;
+  final bool isDesktop;
+
+  const _HoverCta({required this.onTap, required this.isDesktop});
+
+  @override
+  State<_HoverCta> createState() => _HoverCtaState();
+}
+
+class _HoverCtaState extends State<_HoverCta> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          transform: Matrix4.translationValues(0, _isHovered ? -2 : 0, 0),
+          padding: EdgeInsets.symmetric(
+            horizontal: widget.isDesktop ? 20 : 14,
+            vertical: widget.isDesktop ? 12 : 10,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.secondary,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.secondary.withValues(alpha: _isHovered ? 0.45 : 0.25),
+                blurRadius: _isHovered ? 14 : 6,
+                offset: Offset(0, _isHovered ? 4 : 2),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Let's Talk",
+                style: AppTextStyles.labelMd(
+                  color: AppColors.onSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 6),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                transform: Matrix4.translationValues(_isHovered ? 3 : 0, 0, 0),
+                child: const Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 16,
+                  color: AppColors.onSecondary,
+                ),
+              ),
+            ],
           ),
         ),
       ),

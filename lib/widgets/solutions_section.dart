@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
+import 'fade_slide_in.dart';
 
 class SolutionsSection extends StatelessWidget {
   final Function(String section) onExploreSolution;
@@ -73,24 +74,31 @@ class SolutionsSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header
-                Text(
-                  'SOLUTIONS',
-                  style: AppTextStyles.labelCaps(
-                    color: AppColors.secondary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Technology That Solves\nReal Problems.',
-                  style: AppTextStyles.headlineLg(color: AppColors.primary),
-                ),
-                const SizedBox(height: 12),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 600),
-                  child: Text(
-                    'Whether you are launching an early-stage venture or scaling an existing enterprise stack, we adapt our engineering to your current inflection point.',
-                    style: AppTextStyles.bodyMd(color: AppColors.onSurfaceVariant),
+                FadeSlideIn(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'SOLUTIONS',
+                        style: AppTextStyles.labelCaps(
+                          color: AppColors.secondary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Technology That Solves\nReal Problems.',
+                        style: AppTextStyles.headlineLg(color: AppColors.primary),
+                      ),
+                      const SizedBox(height: 12),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 600),
+                        child: Text(
+                          'Whether you are launching an early-stage venture or scaling an existing enterprise stack, we adapt our engineering to your current inflection point.',
+                          style: AppTextStyles.bodyMd(color: AppColors.onSurfaceVariant),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 48),
@@ -102,22 +110,22 @@ class SolutionsSection extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(child: _buildSolutionCard(solutions[0])),
+                          Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 100), child: _buildSolutionCard(solutions[0]))),
                           const SizedBox(width: 20),
-                          Expanded(child: _buildSolutionCard(solutions[1])),
+                          Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 180), child: _buildSolutionCard(solutions[1]))),
                           const SizedBox(width: 20),
-                          Expanded(child: _buildSolutionCard(solutions[2])),
+                          Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 260), child: _buildSolutionCard(solutions[2]))),
                         ],
                       ),
                       const SizedBox(height: 20),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(child: _buildSolutionCard(solutions[3])),
+                          Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 150), child: _buildSolutionCard(solutions[3]))),
                           const SizedBox(width: 20),
-                          Expanded(child: _buildSolutionCard(solutions[4])),
+                          Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 230), child: _buildSolutionCard(solutions[4]))),
                           const SizedBox(width: 20),
-                          Expanded(child: _buildSolutionCard(solutions[5])),
+                          Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 310), child: _buildSolutionCard(solutions[5]))),
                         ],
                       ),
                     ],
@@ -169,64 +177,108 @@ class SolutionsSection extends StatelessWidget {
   }
 
   Widget _buildSolutionCard(_SolutionData data) {
-    return Container(
-      padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                data.objective,
-                style: AppTextStyles.labelCaps(
-                  color: AppColors.secondary,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                data.title,
-                style: AppTextStyles.headlineSm(color: AppColors.primary),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                data.description,
-                style: AppTextStyles.bodySm(color: AppColors.onSurfaceVariant),
+    return _InteractiveSolutionCard(
+      data: data,
+      onTap: () => onExploreSolution('contact'),
+    );
+  }
+}
+
+class _InteractiveSolutionCard extends StatefulWidget {
+  final _SolutionData data;
+  final VoidCallback onTap;
+
+  const _InteractiveSolutionCard({required this.data, required this.onTap});
+
+  @override
+  State<_InteractiveSolutionCard> createState() => _InteractiveSolutionCardState();
+}
+
+class _InteractiveSolutionCardState extends State<_InteractiveSolutionCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.translationValues(0, _isHovered ? -6 : 0, 0),
+          padding: const EdgeInsets.all(28),
+          decoration: BoxDecoration(
+            color: _isHovered ? AppColors.surfaceContainerLowest : AppColors.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _isHovered ? AppColors.secondary.withValues(alpha: 0.4) : Colors.transparent,
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: _isHovered
+                    ? AppColors.secondary.withValues(alpha: 0.12)
+                    : Colors.transparent,
+                blurRadius: 18,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
-          const SizedBox(height: 24),
-          MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: () => onExploreSolution('contact'),
-              child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.data.objective,
+                    style: AppTextStyles.labelCaps(
+                      color: AppColors.secondary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    widget.data.title,
+                    style: AppTextStyles.headlineSm(color: AppColors.primary),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    widget.data.description,
+                    style: AppTextStyles.bodySm(color: AppColors.onSurfaceVariant),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    data.actionText,
+                    widget.data.actionText,
                     style: AppTextStyles.labelMd(
                       color: AppColors.secondary,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(width: 6),
-                  const Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 16,
-                    color: AppColors.secondary,
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    transform: Matrix4.translationValues(_isHovered ? 4 : 0, 0, 0),
+                    child: const Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 16,
+                      color: AppColors.secondary,
+                    ),
                   ),
                 ],
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

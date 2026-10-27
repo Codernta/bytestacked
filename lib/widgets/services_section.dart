@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
+import 'animated_hover_card.dart';
+import 'fade_slide_in.dart';
 
 class ServicesSection extends StatelessWidget {
   const ServicesSection({super.key});
@@ -26,33 +28,35 @@ class ServicesSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header
-                isDesktop
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(child: _buildHeaderTitle()),
-                          const SizedBox(width: 48),
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 440),
-                            child: Text(
+                FadeSlideIn(
+                  child: isDesktop
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(child: _buildHeaderTitle()),
+                            const SizedBox(width: 48),
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 440),
+                              child: Text(
+                                'From the first idea to a production-ready product, we provide technology services tailored to your exact business requirements.',
+                                style: AppTextStyles.bodyMd(color: AppColors.onSurfaceVariant),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildHeaderTitle(),
+                            const SizedBox(height: 12),
+                            Text(
                               'From the first idea to a production-ready product, we provide technology services tailored to your exact business requirements.',
                               style: AppTextStyles.bodyMd(color: AppColors.onSurfaceVariant),
                             ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildHeaderTitle(),
-                          const SizedBox(height: 12),
-                          Text(
-                            'From the first idea to a production-ready product, we provide technology services tailored to your exact business requirements.',
-                            style: AppTextStyles.bodyMd(color: AppColors.onSurfaceVariant),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
+                ),
                 const SizedBox(height: 48),
 
                 // 7 Services Grid
@@ -64,7 +68,10 @@ class ServicesSection extends StatelessWidget {
                         _buildGridRows(crossAxisCount),
                         const SizedBox(height: 20),
                         // 07. Spanning card
-                        _buildSpanningCard(isDesktop: isDesktop),
+                        FadeSlideIn(
+                          delay: const Duration(milliseconds: 350),
+                          child: _buildSpanningCard(isDesktop: isDesktop),
+                        ),
                       ],
                     );
                   },
@@ -175,22 +182,22 @@ class ServicesSection extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(child: _buildServiceCard(services[0])),
+              Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 100), child: _buildServiceCard(services[0]))),
               const SizedBox(width: 20),
-              Expanded(child: _buildServiceCard(services[1])),
+              Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 180), child: _buildServiceCard(services[1]))),
               const SizedBox(width: 20),
-              Expanded(child: _buildServiceCard(services[2])),
+              Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 260), child: _buildServiceCard(services[2]))),
             ],
           ),
           const SizedBox(height: 20),
           Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(child: _buildServiceCard(services[3])),
+              Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 150), child: _buildServiceCard(services[3]))),
               const SizedBox(width: 20),
-              Expanded(child: _buildServiceCard(services[4])),
+              Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 230), child: _buildServiceCard(services[4]))),
               const SizedBox(width: 20),
-              Expanded(child: _buildServiceCard(services[5])),
+              Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 310), child: _buildServiceCard(services[5]))),
             ],
           ),
         ],
@@ -238,19 +245,25 @@ class ServicesSection extends StatelessWidget {
 
   Widget _buildServiceCard(_ServiceData data) {
     if (data.isCoreFocus) {
-      return Container(
+      return AnimatedHoverCard(
+        backgroundColor: AppColors.primary,
+        liftOffset: -8.0,
+        hoverBorderColor: AppColors.secondary,
+        normalShadows: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+        hoverShadows: [
+          BoxShadow(
+            color: AppColors.secondary.withValues(alpha: 0.35),
+            blurRadius: 30,
+            offset: const Offset(0, 14),
+          ),
+        ],
         padding: const EdgeInsets.all(28),
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -317,19 +330,11 @@ class ServicesSection extends StatelessWidget {
       );
     }
 
-    return Container(
+    return AnimatedHoverCard(
+      backgroundColor: AppColors.surfaceContainerLowest,
+      liftOffset: -6.0,
+      hoverBorderColor: AppColors.secondary.withValues(alpha: 0.35),
       padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -392,20 +397,11 @@ class ServicesSection extends StatelessWidget {
   }
 
   Widget _buildSpanningCard({required bool isDesktop}) {
-    return Container(
-      width: double.infinity,
+    return AnimatedHoverCard(
+      backgroundColor: AppColors.surfaceContainerLowest,
+      liftOffset: -4.0,
+      hoverBorderColor: AppColors.secondary.withValues(alpha: 0.35),
       padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: isDesktop
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

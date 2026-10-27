@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
+import 'animated_hover_card.dart';
+import 'fade_slide_in.dart';
 
 class TechAndModelsSection extends StatelessWidget {
   final Function(String section) onSelectModel;
@@ -26,42 +28,44 @@ class TechAndModelsSection extends StatelessWidget {
             child: Column(
               children: [
                 // Top: Tech Standards
-                Column(
-                  children: [
-                    Text(
-                      'TECHNOLOGY STANDARDS',
-                      style: AppTextStyles.labelCaps(
-                        color: AppColors.secondary,
-                        fontWeight: FontWeight.w700,
+                FadeSlideIn(
+                  child: Column(
+                    children: [
+                      Text(
+                        'TECHNOLOGY STANDARDS',
+                        style: AppTextStyles.labelCaps(
+                          color: AppColors.secondary,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Built on Modern, Resilient Foundational Stacks',
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.headlineMd(color: AppColors.primary),
-                    ),
-                    const SizedBox(height: 24),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 900),
-                      child: Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: const [
-                          _TechPill(text: 'Flutter & Dart', hasDot: true),
-                          _TechPill(text: 'Riverpod / BLoC'),
-                          _TechPill(text: 'TypeScript & Next.js'),
-                          _TechPill(text: 'PostgreSQL / Supabase'),
-                          _TechPill(text: 'Firebase Realtime'),
-                          _TechPill(text: 'OpenAI / Claude LLM APIs'),
-                          _TechPill(text: 'Docker & Kubernetes'),
-                          _TechPill(text: 'AWS / Google Cloud'),
-                          _TechPill(text: 'Fastlane CI/CD'),
-                        ],
+                      const SizedBox(height: 12),
+                      Text(
+                        'Built on Modern, Resilient Foundational Stacks',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.headlineMd(color: AppColors.primary),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 24),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 900),
+                        child: Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: const [
+                            _InteractiveTechPill(text: 'Flutter & Dart', hasDot: true),
+                            _InteractiveTechPill(text: 'Riverpod / BLoC'),
+                            _InteractiveTechPill(text: 'TypeScript & Next.js'),
+                            _InteractiveTechPill(text: 'PostgreSQL / Supabase'),
+                            _InteractiveTechPill(text: 'Firebase Realtime'),
+                            _InteractiveTechPill(text: 'OpenAI / Claude LLM APIs'),
+                            _InteractiveTechPill(text: 'Docker & Kubernetes'),
+                            _InteractiveTechPill(text: 'AWS / Google Cloud'),
+                            _InteractiveTechPill(text: 'Fastlane CI/CD'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 64),
 
@@ -70,11 +74,11 @@ class TechAndModelsSection extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(child: _buildModel1()),
+                      Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 100), child: _buildModel1())),
                       const SizedBox(width: 20),
-                      Expanded(child: _buildModel2()),
+                      Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 200), child: _buildModel2())),
                       const SizedBox(width: 20),
-                      Expanded(child: _buildModel3()),
+                      Expanded(child: FadeSlideIn(delay: const Duration(milliseconds: 300), child: _buildModel3())),
                     ],
                   )
                 else
@@ -96,19 +100,11 @@ class TechAndModelsSection extends StatelessWidget {
   }
 
   Widget _buildModel1() {
-    return Container(
+    return AnimatedHoverCard(
+      backgroundColor: AppColors.surfaceContainerLowest,
+      liftOffset: -6.0,
+      hoverBorderColor: AppColors.secondary.withValues(alpha: 0.35),
       padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -169,19 +165,25 @@ class TechAndModelsSection extends StatelessWidget {
   }
 
   Widget _buildModel2() {
-    return Container(
+    return AnimatedHoverCard(
+      backgroundColor: AppColors.primary,
+      liftOffset: -8.0,
+      hoverBorderColor: AppColors.secondary,
+      normalShadows: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.15),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
+        ),
+      ],
+      hoverShadows: [
+        BoxShadow(
+          color: AppColors.secondary.withValues(alpha: 0.35),
+          blurRadius: 32,
+          offset: const Offset(0, 14),
+        ),
+      ],
       padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -255,19 +257,11 @@ class TechAndModelsSection extends StatelessWidget {
   }
 
   Widget _buildModel3() {
-    return Container(
+    return AnimatedHoverCard(
+      backgroundColor: AppColors.surfaceContainerLowest,
+      liftOffset: -6.0,
+      hoverBorderColor: AppColors.secondary.withValues(alpha: 0.35),
       padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -352,49 +346,68 @@ class TechAndModelsSection extends StatelessWidget {
   }
 }
 
-class _TechPill extends StatelessWidget {
+class _InteractiveTechPill extends StatefulWidget {
   final String text;
   final bool hasDot;
 
-  const _TechPill({required this.text, this.hasDot = false});
+  const _InteractiveTechPill({required this.text, this.hasDot = false});
+
+  @override
+  State<_InteractiveTechPill> createState() => _InteractiveTechPillState();
+}
+
+class _InteractiveTechPillState extends State<_InteractiveTechPill> {
+  bool _isHovered = false;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        transform: Matrix4.translationValues(0, _isHovered ? -3 : 0, 0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: _isHovered ? AppColors.surfaceContainerLowest : AppColors.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: _isHovered ? AppColors.secondary.withValues(alpha: 0.5) : Colors.transparent,
+            width: 1.2,
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (hasDot) ...[
-            Container(
-              width: 6,
-              height: 6,
-              decoration: const BoxDecoration(
-                color: AppColors.secondary,
-                shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: _isHovered
+                  ? AppColors.secondary.withValues(alpha: 0.15)
+                  : Colors.black.withValues(alpha: 0.03),
+              blurRadius: _isHovered ? 12 : 4,
+              offset: Offset(0, _isHovered ? 4 : 1),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (widget.hasDot) ...[
+              Container(
+                width: 6,
+                height: 6,
+                decoration: const BoxDecoration(
+                  color: AppColors.secondary,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              widget.text,
+              style: AppTextStyles.labelMd(
+                color: _isHovered ? AppColors.secondary : AppColors.primary,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(width: 8),
           ],
-          Text(
-            text,
-            style: AppTextStyles.labelMd(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

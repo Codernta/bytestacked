@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
+import 'fade_slide_in.dart';
 
 class ContactSection extends StatefulWidget {
   const ContactSection({super.key});
@@ -76,44 +77,46 @@ class _ContactSectionState extends State<ContactSection> {
               horizontal: isDesktop ? 48.0 : 20.0,
               vertical: isDesktop ? 80.0 : 48.0,
             ),
-            child: Container(
-              padding: EdgeInsets.all(isDesktop ? 48 : 24),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceContainerLowest,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 20,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: isDesktop
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Left Info Column
-                        Expanded(
-                          flex: 5,
-                          child: _buildLeftInfo(),
-                        ),
-                        const SizedBox(width: 48),
-                        // Right Form Column
-                        Expanded(
-                          flex: 7,
-                          child: _buildForm(),
-                        ),
-                      ],
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildLeftInfo(),
-                        const SizedBox(height: 36),
-                        _buildForm(),
-                      ],
+            child: FadeSlideIn(
+              child: Container(
+                padding: EdgeInsets.all(isDesktop ? 48 : 24),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceContainerLowest,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 4),
                     ),
+                  ],
+                ),
+                child: isDesktop
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Left Info Column
+                          Expanded(
+                            flex: 5,
+                            child: _buildLeftInfo(),
+                          ),
+                          const SizedBox(width: 48),
+                          // Right Form Column
+                          Expanded(
+                            flex: 7,
+                            child: _buildForm(),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildLeftInfo(),
+                          const SizedBox(height: 36),
+                          _buildForm(),
+                        ],
+                      ),
+              ),
             ),
           ),
         ),
@@ -360,16 +363,18 @@ class _ContactSectionState extends State<ContactSection> {
 
           // Success Notification
           if (_isSubmitted) ...[
-            Container(
-              padding: const EdgeInsets.all(14),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.secondaryFixed.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(10),
+                color: AppColors.secondaryFixed.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.secondary, width: 1),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.check_circle_rounded, color: AppColors.secondary, size: 20),
-                  const SizedBox(width: 10),
+                  const Icon(Icons.check_circle_rounded, color: AppColors.secondary, size: 24),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'Thank you! Your project inquiry has been queued. We will review and reach out shortly.',
@@ -390,26 +395,9 @@ class _ContactSectionState extends State<ContactSection> {
                 'Strict NDA confidentiality assured.',
                 style: AppTextStyles.labelSm(color: AppColors.onSurfaceVariant),
               ),
-              ElevatedButton(
+              _HoverSendButton(
                 onPressed: _handleSubmit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary,
-                  foregroundColor: AppColors.onSecondary,
-                  elevation: 2,
-                  shape: const StadiumBorder(),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Send Project Inquiry',
-                      style: AppTextStyles.labelMd(color: AppColors.onSecondary),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.send_rounded, size: 16, color: AppColors.onSecondary),
-                  ],
-                ),
+                label: 'Send Project Inquiry',
               ),
             ],
           ),
@@ -496,6 +484,67 @@ class _ContactSectionState extends State<ContactSection> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _HoverSendButton extends StatefulWidget {
+  final VoidCallback onPressed;
+  final String label;
+
+  const _HoverSendButton({required this.onPressed, required this.label});
+
+  @override
+  State<_HoverSendButton> createState() => _HoverSendButtonState();
+}
+
+class _HoverSendButtonState extends State<_HoverSendButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onPressed,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          transform: Matrix4.translationValues(0, _isHovered ? -3 : 0, 0),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          decoration: BoxDecoration(
+            color: AppColors.secondary,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.secondary.withValues(alpha: _isHovered ? 0.45 : 0.25),
+                blurRadius: _isHovered ? 16 : 8,
+                offset: Offset(0, _isHovered ? 6 : 3),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.label,
+                style: AppTextStyles.labelMd(color: AppColors.onSecondary),
+              ),
+              const SizedBox(width: 8),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                transform: Matrix4.translationValues(
+                  _isHovered ? 3 : 0,
+                  _isHovered ? -2 : 0,
+                  0,
+                ),
+                child: const Icon(Icons.send_rounded, size: 16, color: AppColors.onSecondary),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

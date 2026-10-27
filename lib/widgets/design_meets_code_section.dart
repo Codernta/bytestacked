@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
+import 'animated_hover_card.dart';
+import 'fade_slide_in.dart';
 
 class DesignMeetsCodeSection extends StatelessWidget {
   const DesignMeetsCodeSection({super.key});
@@ -28,22 +30,33 @@ class DesignMeetsCodeSection extends StatelessWidget {
                       // Visual Column (Left)
                       Expanded(
                         flex: 5,
-                        child: _buildImageCard(),
+                        child: FadeSlideIn(
+                          delay: const Duration(milliseconds: 100),
+                          child: _buildImageCard(),
+                        ),
                       ),
                       const SizedBox(width: 48),
                       // Details Column (Right)
                       Expanded(
                         flex: 7,
-                        child: _buildDetailsContent(isDesktop: true),
+                        child: FadeSlideIn(
+                          delay: const Duration(milliseconds: 200),
+                          child: _buildDetailsContent(isDesktop: true),
+                        ),
                       ),
                     ],
                   )
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildDetailsContent(isDesktop: false),
+                      FadeSlideIn(
+                        child: _buildDetailsContent(isDesktop: false),
+                      ),
                       const SizedBox(height: 36),
-                      _buildImageCard(),
+                      FadeSlideIn(
+                        delay: const Duration(milliseconds: 150),
+                        child: _buildImageCard(),
+                      ),
                     ],
                   ),
           ),
@@ -53,18 +66,10 @@ class DesignMeetsCodeSection extends StatelessWidget {
   }
 
   Widget _buildImageCard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+    return AnimatedHoverCard(
+      backgroundColor: AppColors.surfaceContainerLowest,
+      liftOffset: -8.0,
+      hoverBorderColor: AppColors.secondary.withValues(alpha: 0.45),
       padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,19 +204,11 @@ class DesignMeetsCodeSection extends StatelessWidget {
     required String title,
     required String description,
   }) {
-    return Container(
+    return AnimatedHoverCard(
+      backgroundColor: AppColors.surfaceContainerLowest,
+      liftOffset: -4.0,
+      hoverBorderColor: AppColors.secondary.withValues(alpha: 0.35),
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
